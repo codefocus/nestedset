@@ -2,15 +2,14 @@
 
 use App;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  *	NestedSetTrait trait.
  *
- *	Implements a nested set hierarchy.
- *	Assumes the Model's database table contains the fields:
- *	- left
- *	- right
- *	- parent_id (or "parent_***", depending on the Model's PK)
+ *	Implements a nested set hierarchy in Eloquent models.
+ *	
+ *	Detailed documentation is available at https://github.com/codefocus/nestedset
  *
  */
 trait NestedSetTrait {
@@ -36,13 +35,8 @@ trait NestedSetTrait {
 	 * @return void
 	 */
 	public static function bootNestedSetTrait() {
-		 //static::addGlobalScope(new NestedSetScope);
 		static::observe(new NestedSetObserver);
-		
 	}
-	
-	
-	
 	
 	
 	/**
@@ -166,6 +160,29 @@ trait NestedSetTrait {
 	
 	
 	
+	public function scopeLimitDepth(Builder $query, $maximumDepth, $minimumDepth = 0) {
+		
+	}
+	
+	
+	/**
+	 * scopeForGroup function.
+	 * 
+	 * @access public
+	 * @param Builder $query
+	 * @param mixed $groupId
+	 * @return Builder
+	 */
+	public function scopeForGroup(Builder $query, $groupId) {
+		$groupColumn = $this->getGroupColumn();
+		if (is_null($groupColumn)) {
+		//	Depth specified but no depth column configured
+			throw new \UnexpectedValueException('Depth specified, but no depth column configured.');
+		}
+		echo ($groupId);
+		$query = $query->where($groupColumn, '=', $groupId);
+	}
+	
 	
 	/**
 	 * buildTree function.
@@ -174,7 +191,7 @@ trait NestedSetTrait {
 	 * @param int $left (default: 0)
 	 * @return void
 	 */
-	public function buildTree($left = 0) {
+	public function OLD_buildTree($left = 0) {
 	//	the right value of this Model is the left value + 1
 		$right = $left + 1;
 	//	get all children of this Model
@@ -246,9 +263,8 @@ trait NestedSetTrait {
 		$groupColumn = $this->getGroupColumn();
 		
 		$query = $this->whereBetween($leftColumn, [$this->$leftColumn + 1, $this->$rightColumn - 1]);
-		
 		if (!is_null($groupColumn)) {
-			$query = $query->where($groupColumn, '=', $this->$groupColumn);
+			$query = $query->forGroup($this->$groupColumn);
 		}
 		
 		if ($depth) {
@@ -326,6 +342,50 @@ trait NestedSetTrait {
 	public function getAncestorsAttribute() {
 		return $this->ancestors()->get();
 	}
+	
+	
+	public function scopeTree() {
+	
+		$parentColumn = $this->getParentColumn();
+		$depthColumn = $this->getDepthColumn();
+		
+	//	If we're using parent_id, use that to get the toplevel nodes.
+		if (!is_null($parentColumn)) {
+			$rootNodes = static::whereNull($parentColumn);
+		}
+		
+	//	If we're using depth, use that to get the toplevel nodes.
+		if (!is_null($depthColumn)) {
+			return static::where($depthColumn, '=', 0);
+		}
+		
+		
+		
+		
+		return $rootNodes;
+	
+	//	Get ALL nodes and order by left.
+		
+/*
+		if (!is_null($depthColumn)) {
+			return static::where($depthColumn, '=', 0);
+		}
+*/
+		
+		
+		return static::whereBetween($leftColumn, [$this->$leftColumn + 1, $this->$rightColumn - 1]);
+		
+		
+		
+		dd('Building tree');
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

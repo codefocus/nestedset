@@ -169,6 +169,9 @@ class NestedSetObserver {
 			
 			//$originalParent = $model->where
 			
+			
+			//	@TODO:	Move this to the Trait. Override save().
+			
 
 			
 			dd($modelId);
@@ -193,7 +196,7 @@ AND node.id = 8
 	
 	
 	public function deleting(\Illuminate\Database\Eloquent\Model $model) {
-	//	An node is being deleted.
+	//	A node is being deleted.
 	//	Rebuild the entire tree.
 		echo 'node deleted';
 	//	@TODO:	Be smarter about this method.

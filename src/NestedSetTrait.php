@@ -159,6 +159,52 @@ trait NestedSetTrait {
 	}
 	
 	
+	/**
+	 * Ensure depth is available in the query result,
+	 * whether through the depth column or by calculating.
+	 * 
+	 * @access public
+	 * @param Builder $builder
+	 * @return Builder
+	 */
+	public function scopeWithDepth(Builder $builder) {
+		$depthColumn = $this->getDepthColumn();
+		if (is_null($depthColumn)) {
+			return $this->scopeWithCalculatedDepth($builder);
+		}
+		return $builder;
+	}
+	
+	
+	/**
+	 * Add a calculated depth value to each query result,
+	 * if the depth column is not configured.
+	 * 
+	 * @access public
+	 * @param Builder $builder
+	 * @return Builder
+	 */
+	public function scopeWithCalculatedDepth(Builder $builder) {
+		$tableName = $this->getTable();
+		$query = $builder->getQuery();
+		$grammar = $query->getGrammar();
+	//	Build subquery
+		$subquery = \DB::table($tableName.' AS ns_d')
+			->selectRaw('COUNT(ns_d.left)')
+			->whereRaw($grammar->wrap($tableName).'.left BETWEEN ns_d.left AND ns_d.right')
+			->toSql();
+			
+		$depthColumn = '('.$subquery.') AS depth';
+	//	Get requested columns and add "*" if none are specified yet,
+	//	so we don't just select our subquery.
+        $query = $builder->getQuery();
+        if (is_null($query->columns)) {
+	        $query->columns = ['*'];
+        }
+	//	Add depth subquery as a column
+        return $query->selectRaw($depthColumn);
+	}
+	
 	
 	public function scopeLimitDepth(Builder $query, $maximumDepth, $minimumDepth = 0) {
 		
@@ -274,10 +320,7 @@ trait NestedSetTrait {
 				throw new \UnexpectedValueException('Depth specified, but no depth column configured.');
 			}
 		//	Limit depth
-			$minDepth = max(0, $this->$depthColumn - $depth);
-			if ($minDepth > 0) {
-				$query = $query->where($depthColumn, '>=', max(0, $this->$depthColumn - $depth));
-			}
+			$query = $query->where($depthColumn, '<=', max($this->$depthColumn + $depth));
 		}
 		return $query;
 	}
@@ -322,10 +365,10 @@ trait NestedSetTrait {
 			//	Depth specified but no depth column configured
 				throw new \UnexpectedValueException('Depth specified, but no depth column configured.');
 			}
-		//	Limit depth
+		//	Limit depth, only if the depth specified does not take us to the root level.
 			$minDepth = max(0, $this->$depthColumn - $depth);
 			if ($minDepth > 0) {
-				$query = $query->where($depthColumn, '>=', max(0, $this->$depthColumn - $depth));
+				$query = $query->where($depthColumn, '>=', $minDepth);
 			}
 		}
 		return $query;
@@ -344,25 +387,41 @@ trait NestedSetTrait {
 	}
 	
 	
-	public function scopeTree() {
+	public function scopeTree(Builder $query, $depth = null) {
 	
 		$parentColumn = $this->getParentColumn();
-		$depthColumn = $this->getDepthColumn();
+		$leftColumn = $this->getQualifiedLeftColumn();
 		
+		
+		if ($depth) {
+		//	If depth is specified, ensure it's included in the query.
+		//	If a depth field is not configured, it is calculated.
+			$query->withDepth();
+			$query->limitDepth($depth);
+		}
+		
+		
+		$query->orderBy($leftColumn);
+		
+		//dd($query->toSql());
+		
+	//	
+		
+		
+/*
 	//	If we're using parent_id, use that to get the toplevel nodes.
 		if (!is_null($parentColumn)) {
-			$rootNodes = static::whereNull($parentColumn);
+			$query->whereNull($parentColumn);
 		}
 		
 	//	If we're using depth, use that to get the toplevel nodes.
 		if (!is_null($depthColumn)) {
-			return static::where($depthColumn, '=', 0);
+			return $query->where($depthColumn, '=', 0);
 		}
+*/
 		
 		
-		
-		
-		return $rootNodes;
+		return $query;
 	
 	//	Get ALL nodes and order by left.
 		

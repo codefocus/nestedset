@@ -88,7 +88,7 @@ The names of these fields can be adjusted per Model, by setting the following pr
 
 
 
-```http://www.codefocus.ca/blog/efficient-tree-retrieval-in-laravel-using-the-nested-set```
+@TODO: http://www.codefocus.ca/blog/efficient-tree-retrieval-in-laravel-using-the-nested-set
 
 
 ## Change log

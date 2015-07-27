@@ -7,6 +7,12 @@
 
 Simple to use implementation of the nested set structure, for Eloquent models in Laravel.
 
+## CAUTION
+
+**This package is currently INCOMPLETE and deployment in a production environment is NOT RECOMMENDED**
+
+To learn more about the nested set structure, please refer to "[Efficient tree retrieval in Laravel using the nested set structure](http://www.codefocus.ca/blog/efficient-tree-retrieval-in-laravel-using-the-nested-set)" on [codefocus.ca](http://www.codefocus.ca/).
+
 ## Table of contents
 
 * [Install](#install)
@@ -17,10 +23,10 @@ Simple to use implementation of the nested set structure, for Eloquent models in
 * [Usage](#usage)
   * [Building a tree](#building-a-tree)
     * [Building a new tree from an existing parent-child based data structure](#building-a-new-tree-from-an-existing-parent-child-based-data-structure)
-    * [Adding a node to a tree](#adding-a-node-to-a-tree)
+    * [Rebuilding the tree under an existing node](#rebuilding-the-tree-under-an-existing-node)
+    * [Adding a node](#adding-a-node)
     * [Moving a node](#moving-a-node)
-    * [Removing a node from a tree](#removing-a-node-from-a-tree)
-* [Change log](#change-log)
+    * [Removing a node](#removing-a-node)
 * [Testing](#testing)
 * [Contributing](#contributing)
 * [Security](#security)
@@ -99,13 +105,13 @@ If you are not using `depth` and `group`, these indexes will suffice:
 - `left`, `right`
 - `parent_id`
 
-
 ## Usage
-
 
 ### Building a tree
 
 #### Building a new tree from an existing parent-child based data structure
+
+**@TODO: incomplete**
 
 Use your data's existing parent &rarr; child hierarchy to construct a new tree
 (or multiple trees, if you have configured the `$nestedSetColumns['group']` column in your model).
@@ -116,7 +122,17 @@ This may take a while, depending on the size of your data set!
 YourModel::buildNewTree();
 ```
 
-#### Adding a node to a tree
+#### Rebuilding the tree under an existing node
+
+**@TODO: incomplete**
+
+Use your data's existing parent &rarr; child hierarchy to (re)construct (part of the) tree, from the current node downward.
+
+``` php
+$yourModelInstance->buildTree();
+```
+
+#### Adding a node
 
 Adding a node to the tree requires literally no work.
 Just save a model instance as usual, and the Trait will automagically adjust the tree structure.
@@ -127,6 +143,8 @@ $yourModelInstance->save();
 
 #### Moving a node
 
+**@TODO: incomplete**
+
 Moving a node from one parent to another (or no parent) is handled in the same way.
 When the Trait sees that a model instance's `parent_id` (or the column name configured in `$nestedSetColumns['parent']`) value has changed, the tree structure is adjusted accordingly.
 
@@ -135,7 +153,9 @@ $yourModelInstance->parent_id = $newParent->id;
 $yourModelInstance->save();
 ```
 
-#### Removing a node from a tree
+#### Removing a node
+
+**@TODO: incomplete**
 
 Deleting a node from the tree is also automated by the Trait.
 When you delete a model instance as usual, the Trait will adjust the tree structure.
@@ -143,17 +163,6 @@ When you delete a model instance as usual, the Trait will adjust the tree struct
 ``` php
 $yourModelInstance->delete();
 ```
-
-
-
-
-
-@TODO: http://www.codefocus.ca/blog/efficient-tree-retrieval-in-laravel-using-the-nested-set
-
-
-## Change log
-
-Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
 
 ## Testing
 

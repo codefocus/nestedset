@@ -7,8 +7,21 @@
 
 Simple to use implementation of the nested set structure, for Eloquent models in Laravel.
 
-* auto-gen TOC:
-{:toc}
+## Table of contents
+
+* [Install](#install)
+* [Configuration](#configuration)
+* [Usage](#usage)
+  * [Building a tree](#building-a-tree)
+    * [Building a new tree from an existing parent-child based data structure](#building-a-new-tree-from-an-existing-parent-child-based-data-structure)
+    * [Adding a node to a tree](#adding-a-node-to-a-tree)
+    * [Moving a node](#moving-a-node)
+    * [Removing a node from a tree](#removing-a-node-from-a-tree)
+* [Change log](#change-log)
+* [Testing](#testing)
+* [Contributing](#contributing)
+* [Security](#security)
+* [Credits](#credits)
 
 ## Install
 

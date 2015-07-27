@@ -7,6 +7,8 @@
 
 Simple to use implementation of the nested set structure, for Eloquent models in Laravel.
 
+* auto-gen TOC:
+{:toc}
 
 ## Install
 

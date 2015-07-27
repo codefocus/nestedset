@@ -351,12 +351,12 @@ trait NestedSetTrait {
 		$rightColumn = $this->getRightColumn();
 		$groupColumn = $this->getGroupColumn();
 		
-		$query = $this->where($leftColumn, '<', $this->$leftColumn)
+		$query = $this
+			->where($leftColumn, '<', $this->$leftColumn)
 			->where($rightColumn, '>', $this->$rightColumn);
 		
-		
 		if (!is_null($groupColumn)) {
-			$query = $query->where($groupColumn, '=', $this->$groupColumn);
+			$query = $query->forGroup($this->$groupColumn);
 		}
 		
 		if ($depth) {
@@ -384,6 +384,19 @@ trait NestedSetTrait {
 	 */
 	public function getAncestorsAttribute() {
 		return $this->ancestors()->get();
+	}
+	
+	/**
+	 * descendantCount attribute.
+	 * Returns the number of descendants for this node.
+	 * 
+	 * @access public
+	 * @return integer
+	 */
+	public function getDescendantCountAttribute() {
+		$leftColumn = $this->getLeftColumn();
+		$rightColumn = $this->getRightColumn();
+		return floor(($this->$rightColumn - $this->$leftColumn - 1) / 2);
 	}
 	
 	

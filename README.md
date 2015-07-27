@@ -11,6 +11,9 @@ Simple to use implementation of the nested set structure, for Eloquent models in
 
 * [Install](#install)
 * [Configuration](#configuration)
+  * [Enabling the nested set functionality in your model](#enabling-the-nested-set-functionality-in-your-model)
+  * [Database columns](#database-columns)
+  * [Database indexes](#database-indexes)
 * [Usage](#usage)
   * [Building a tree](#building-a-tree)
     * [Building a new tree from an existing parent-child based data structure](#building-a-new-tree-from-an-existing-parent-child-based-data-structure)
@@ -33,6 +36,8 @@ $ composer require codefocus/nestedset
 
 ## Configuration
 
+### Enabling the nested set functionality in your model
+
 To implement the NestedSetTrait, simply `use` it in your model:
 
 ``` php
@@ -43,6 +48,8 @@ class YourModel extends \Illuminate\Database\Eloquent\Model {
     
 }
 ```
+
+### Database columns
 
 The Trait expects database columns to be present for (at least) your Model's `left`, `right` and `parent_id` fields.
 The names of these fields can be configured per Model,
@@ -78,6 +85,8 @@ by setting the following protected variables in the Model that uses it:
         'group' => null,
     ];
 ```
+
+### Database indexes
 
 Indexes are highly recommended on these fields (or the ones configured in `$nestedSetColumns`):
 

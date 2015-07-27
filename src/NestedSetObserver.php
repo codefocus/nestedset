@@ -196,12 +196,20 @@ AND node.id = 8
 	
 	
 	public function deleting(\Illuminate\Database\Eloquent\Model $model) {
+		
+	//	Get column names.
+	//	Missing required columns will throw an exception.
+		$pkColumn = $model->getKeyName();
+		$leftColumn = $model->getLeftColumn();
+		$rightColumn = $model->getRightColumn();
+		$parentColumn = $model->getParentColumn();
+		
 	//	A node is being deleted.
 	//	Rebuild the entire tree.
 		echo 'node deleted';
 	//	@TODO:	Be smarter about this method.
 		dd($model);
-		$rootNode = $model::where('parent_id', '=', null)->first();
+		$rootNode = $model::where($parentColumn, '=', null)->first();
 		$rootNode->buildTree();
 		return true;
 	}

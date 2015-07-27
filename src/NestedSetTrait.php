@@ -231,6 +231,32 @@ trait NestedSetTrait {
 	
 	
 	/**
+	 * Build the complete tree structure into existing data.
+	 * This is a slow recursive process and should be used with caution.
+	 * 
+	 * @access public
+	 * @static
+	 * @return void
+	 */
+	public static function buildNewTree() {
+		
+	}
+	
+	
+	/**
+	 * (re)build the tree structure below the current node.
+	 * This is a slow recursive process and should be used with caution.
+	 * 
+	 * @access public
+	 * @static
+	 * @return void
+	 */
+	public function buildTree($left = 0) {
+		
+	}
+	
+	
+	/**
 	 * buildTree function.
 	 * 
 	 * @access public

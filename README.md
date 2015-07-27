@@ -29,11 +29,11 @@ class YourModel extends \Illuminate\Database\Eloquent\Model {
 }
 ```
 
-The Trait expects database columns to be present for your Model's `left`, `right` and `parent_id` fields.
-
-The names of these fields can be adjusted per Model, by setting the following protected variables in the Model that uses it:
+The Trait expects database columns to be present for (at least) your Model's `left`, `right` and `parent_id` fields.
+The names of these fields can be configured per Model,
+by setting the following protected variables in the Model that uses it:
  
-```
+``` php
     protected $nestedSetColumns = [
     //  Which column to use for the "left" value.
     //	Default: left
@@ -64,15 +64,34 @@ The names of these fields can be adjusted per Model, by setting the following pr
     ];
 ```
 
+Indexes are highly recommended on these fields (or the ones configured in `$nestedSetColumns`):
+
+- `left`, `right`, `group`, `depth`
+- `left`, `group`, `depth`
+- `parent_id`
+
+If you're not using `depth` and `group`, these indexes will suffice:
+
+- `left`, `right`
+- `parent_id`
+
 
 ## Usage
 
 
 ### Building a tree
 
-#### Building a tree from an existing parent-child based data structure
+#### Building a new tree from an existing parent-child based data structure
 
-@TODO: Documentation
+Use your data's existing parent -> child hierarchy to construct a new tree
+(or multiple trees, if you have configured the `$nestedSetColumns['group']` column in your model).
+
+This may take a while, depending on the size of your data set!
+
+``` php
+	YourModel::buildNewTree();
+```
+
 
 #### Adding a node to a tree
 

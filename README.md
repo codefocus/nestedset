@@ -70,7 +70,7 @@ Indexes are highly recommended on these fields (or the ones configured in `$nest
 - `left`, `group`, `depth`
 - `parent_id`
 
-If you're not using `depth` and `group`, these indexes will suffice:
+If you are not using `depth` and `group`, these indexes will suffice:
 
 - `left`, `right`
 - `parent_id`
@@ -83,27 +83,44 @@ If you're not using `depth` and `group`, these indexes will suffice:
 
 #### Building a new tree from an existing parent-child based data structure
 
-Use your data's existing parent -> child hierarchy to construct a new tree
+Use your data's existing parent &rarr; child hierarchy to construct a new tree
 (or multiple trees, if you have configured the `$nestedSetColumns['group']` column in your model).
 
 This may take a while, depending on the size of your data set!
 
 ``` php
-	YourModel::buildNewTree();
+YourModel::buildNewTree();
 ```
-
 
 #### Adding a node to a tree
 
-@TODO: Documentation
+Adding a node to the tree requires literally no work.
+Just save a model instance as usual, and the Trait will automagically adjust the tree structure.
 
-#### Removing a node from a tree
-
-@TODO: Documentation
+``` php
+$yourModelInstance->save();
+```
 
 #### Moving a node
 
-@TODO: Documentation
+Moving a node from one parent to another (or no parent) is handled in the same way.
+When the Trait sees that a model instance's `parent_id` (or the column name configured in `$nestedSetColumns['parent']`) value has changed, the tree structure is adjusted accordingly.
+
+``` php
+$yourModelInstance->parent_id = $newParent->id;
+$yourModelInstance->save();
+```
+
+#### Removing a node from a tree
+
+Deleting a node from the tree is also automated by the Trait.
+When you delete a model instance as usual, the Trait will adjust the tree structure.
+
+``` php
+$yourModelInstance->delete();
+```
+
+
 
 
 

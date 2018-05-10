@@ -33,7 +33,7 @@ trait NestedSetTrait
      */
     public static function bootNestedSetTrait()
     {
-        static::observe(new NestedSetObserver());
+        static::observe(NestedSetObserver::class);
     }
 
     /**
@@ -454,7 +454,7 @@ trait NestedSetTrait
                 if (!is_null($parentColumn)) {
                     $query->whereNull($parentColumn);
                 }
-        
+
             //	If we're using depth, use that to get the toplevel nodes.
                 if (!is_null($depthColumn)) {
                     return $query->where($depthColumn, '=', 0);

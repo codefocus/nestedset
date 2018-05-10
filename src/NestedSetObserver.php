@@ -100,8 +100,6 @@ class NestedSetObserver
                 $model->{$depthColumn} = $parent->{$depthColumn} + 1;
             }
         }
-
-        return true;
     }
 
     public function updating(Model $model)

@@ -66,25 +66,25 @@ class NestedSetObserver
 
             //	Define the node's new "left" and "right".
             //	We're inserting ourselves at the rightmost side of our parent container.
-            $model->{$leftColumn} = $parent->right;
-            $model->{$rightColumn} = $parent->right + 1;
+            $model->{$leftColumn} = $parent->{$rightColumn};
+            $model->{$rightColumn} = $parent->{$rightColumn} + 1;
 
             //	Make space.
             if (!is_null($groupColumn)) {
                 //	Group column is configured.
                 //	Only move nodes in the same group as our parent.
                 $model::where($groupColumn, '=', $model->{$groupColumn})
-                    ->where($rightColumn, '>=', $parent->right)
+                    ->where($rightColumn, '>=', $parent->{$rightColumn})
                     ->increment($rightColumn, 2);
                 $model::where($groupColumn, '=', $model->{$groupColumn})
-                    ->where($leftColumn, '>=', $parent->right)
+                    ->where($leftColumn, '>=', $parent->{$rightColumn})
                     ->increment($leftColumn, 2);
             } else {
                 //	Group column is not configured.
                 //	Move nodes across the whole table.
-                $model::where($rightColumn, '>=', $parent->right)
+                $model::where($rightColumn, '>=', $parent->{$rightColumn})
                     ->increment($rightColumn, 2);
-                $model::where($leftColumn, '>=', $parent->right)
+                $model::where($leftColumn, '>=', $parent->{$rightColumn})
                     ->increment($leftColumn, 2);
             }
 
